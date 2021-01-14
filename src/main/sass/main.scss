@@ -1,0 +1,180 @@
+@import "~bootstrap/scss/bootstrap";
+@import "fonts";
+
+$section-header-height: 4.5em;
+
+body {
+  color: $body-color;
+  margin: 0px !important;
+}
+
+.close-icon{
+    color: theme-color('danger');
+}
+.icon-button {
+    background-color: transparent !important;
+    border-color: transparent !important;
+    &:hover, &:focus, &:active {
+        background-color: transparent !important;
+        border-color: transparent !important;
+    }
+}
+
+#main-header{
+    position: -webkit-sticky;
+    position: sticky;
+    top: 0;
+    z-index: 1040;
+    // height: $section-header-height;
+    
+    .nav-brand {
+        // font-family: 'Josefin Sans', cursive;
+        font-family: 'Lobster Two', cursive;
+        font-size: 2em;
+    }
+    .nav-menu{
+        font-family: 'Mukta', sans-serif;
+        font-size: 1.3em;
+    }
+}
+.vs-section{
+    min-height: 100vh;
+    display: block;
+    overflow: auto;
+    padding: 6em 0 5em 0;
+    // width: 100vw;
+}
+
+#map-section {
+    padding: 0 0 0 0 !important;
+    background: url('./../resources/images/neighborhood.jfif') fixed;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    .leaflet-container {
+        // height: 200px;
+        height: 70vw;
+        width: 90vw;
+        max-width: 1100px;
+        min-height: 13rem;
+        // height: 40vw;
+        // width: 70vw;
+        max-height: 70vh;
+        border-radius: 3px;
+        
+    }
+ 
+
+}
+#abt-section{
+    background: url('./../resources/images/about6.png') fixed;
+    -webkit-background-size: fixed;
+    -moz-background-size: fixed;
+    -o-background-size: fixed;
+    background-size: fixed;
+
+    h2{
+        margin: 0 0 3rem 0;
+        
+    }
+}
+
+#vs-image {
+    height: 20rem;
+    margin-top: 1rem;
+}
+
+figcaption {
+    text-align: center;
+}
+
+@import url('https://fonts.googleapis.com/css2?family=Oswald:wght@400;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Lato&display=swap');
+#explore-section{
+    background: url('./../resources/images/wispy.png') fixed;
+    -webkit-background-size: fixed;
+    -moz-background-size: fixed;
+    -o-background-size: fixed;
+    background-size: fixed;
+
+    // font-family: 'Mukta', sans-serif;
+    h1{
+        // font-family: 'Mukta', sans-serif;
+        font-family: 'Lato', sans-serif;
+        font-weight: 600;
+    }
+    h3 {
+        font-family: 'Lato', sans-serif;
+        // font-weight: 300;
+        font-size: 1.3rem;
+        // font-weight: 400;
+    }
+}
+
+h2{
+    // font-family: 'Mukta', sans-serif;
+    font-family: 'Lato', sans-serif;
+    font-weight: 500;
+}
+
+#recognition-container {
+    // position: relative;
+    margin-top: 4rem;
+}
+
+#explore-secondary-row {
+    margin-top: .7rem;
+}
+
+.explore-text-center{
+    display: flex;
+    justify-content: center;
+}
+
+.input-well{
+    background-color: #ffffff;
+    border-radius: $border-radius;
+    margin-right: 1rem;
+    #input-address{
+        margin: 0;
+        input {
+            width: 40vw;
+            max-width: 600rem;
+        }
+    }
+    input {
+        border-radius: 0;
+        border-color: transparent !important;
+    }
+}
+
+#recognition-form {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+}
+
+#submit-icon-container {
+   
+    
+    #upload-file-icon {
+        color: #888;
+    }
+    
+}
+
+
+
+@media only screen and (max-width: 530px) {
+    h1 {
+        font-size: 2rem;
+    }
+    h3 {
+        font-size: 1rem!important;
+    }
+
+  }
