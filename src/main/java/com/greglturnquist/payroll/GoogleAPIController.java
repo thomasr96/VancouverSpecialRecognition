@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.beans.factory.annotation.Value;
 import java.util.HashMap;
+import org.springframework.web.reactive.function.client.WebClient;
 // import javax.ws.rs.core.MediaType;
 
 /**
@@ -20,6 +21,7 @@ public class GoogleAPIController {
     
 	@RequestMapping(value = "/api-key") // <2>
 	public HashMap<String, String> apiKey() {
+		WebClient client1 = WebClient.create();
 		// Object bob = new Object();
 		// bob.k = GOOGLE_MAPS_API_KEY;
 		HashMap<String, String> map = new HashMap<>();

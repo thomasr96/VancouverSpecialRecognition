@@ -1,4 +1,7 @@
 const React = require('react'); 
+
+const client = require('./../client'); 
+
 import Container from 'react-bootstrap/Container';
 import Form from 'react-bootstrap/Form'
 import Row from 'react-bootstrap/Row'
@@ -123,9 +126,13 @@ export default class ExploreSection extends React.Component {
         );
     }
 
-    handleSubmit() {
-        console.log(this.state.file);
-        console.log(this.state.inputAddress);
+    handleSubmit(e) {
+        // console.log(1)
+        // console.log(e)
+        e.preventDefault();
+        e.stopPropagation();
+        // console.log(this.state.file);
+        // console.log(this.state.inputAddress);
         function isEmpty(str){
             return(!str || str.trim().length === 0)
         }
@@ -135,6 +142,25 @@ export default class ExploreSection extends React.Component {
             return;
         }
 
+        let form = new FormData();
+        form.append('file', this.state.file);
+        
+        client({method: 'POST', path: '/recognition', entity: form, headers: {
+            'Content-Type': 'multipart/form-data'
+        }}).done(response => {
+            console.log(response)
+            if (response.entity == 'NONE_FOUND'){
+                console.log('gob')
+            }else{
+                const b64Response = btoa(response.entity);
+                // create an image
+                const outputImg = document.createElement('img');
+                outputImg.src = 'data:image/png;base64,'+b64Response;
+
+                // append it to your page
+                document.body.appendChild(outputImg);
+            }
+		});
         
     }
 
