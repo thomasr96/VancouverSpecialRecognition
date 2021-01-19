@@ -11,8 +11,12 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faUpload, faArrowUp, faTimesCircle } from '@fortawesome/free-solid-svg-icons'
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger'
 import Tooltip from 'react-bootstrap/Tooltip'
+import Image from 'react-bootstrap/Image'
+import Modal from 'react-bootstrap/Modal'
 
 import GoogleAutocompleteSearch from './GoogleAutocompleteSearch'
+import vancouverSpecialImg from './../../resources/images/vancouver_special.jpg'
+
 
 const ExploreMainText = function(){
     return(<Container>
@@ -35,6 +39,43 @@ const ExploreMainText = function(){
     </Container>)
 }
 
+class RecognitionModal extends React.Component {
+
+    constructor(props){
+        super(props)
+        this.state = {};
+    }
+
+    render(){
+        return(
+
+            <Modal
+                show={this.props.show}
+                size="lg"
+                onHide={this.props.onHide}
+                aria-labelledby="contained-modal-title-vcenter"
+                centered
+                id="recognition-modal"
+                >
+                <Modal.Header closeButton>
+                    <Modal.Title id="contained-modal-title-vcenter">
+                        {this.props.titleMessage}
+                    </Modal.Title>
+                </Modal.Header>
+                <Modal.Body >
+                    <Container id='recognition-result-container'>
+                        <div id="scanner-container">
+                            <Image id="recognition-result" className="recognition-result" src={this.props.displayImage} rounded />
+                            {this.props.showScannerBar ? <div className="bar-scanner"></div> : null}
+                        </div>
+                    </Container>
+                </Modal.Body>
+            </Modal>
+            
+        );
+    }
+}
+
 class InputIcon extends React.Component {
 
     constructor(props){
@@ -42,6 +83,7 @@ class InputIcon extends React.Component {
         this.state = {};
         this.componentDidMount.bind(this);
         this.onFileSelect = this.onFileSelect.bind(this);
+        this.onUploadClick = this.onUploadClick.bind(this);
     }
 
     onUploadClick(e){
@@ -49,12 +91,15 @@ class InputIcon extends React.Component {
     }
 
     onFileSelect(inputElement){ 
+        console.log('inputElement')
+        console.log(inputElement)
+
         this.props.setFile(inputElement.files[0]);
     }
 
     componentDidMount() {
         const fileInput = document.getElementById("input-file");
-
+        // fileInput.addEventListener('change', (e) => this.onFileSelect(e.target));
         this.setState({fileInput:fileInput});
 
         
@@ -79,7 +124,7 @@ class InputIcon extends React.Component {
                         <Form.File id="input-file" onChange={(e) => this.onFileSelect(e.target)} label="" accept=".png,.jpg,.jpeg"/>
                     </Form.Group>
         
-                    <Button onClick={this.onUploadClick.bind(this)} id="upload-file-button" className="icon-button" variant="primary">
+                    <Button onClick={this.onUploadClick} id="upload-file-button" className="icon-button" variant="primary">
                         <FontAwesomeIcon id="upload-file-icon" icon={faUpload} />
                     </Button>
                 </div>
@@ -88,11 +133,15 @@ class InputIcon extends React.Component {
     }
 }
 
+
 export default class ExploreSection extends React.Component {
 
     constructor(props) {
 		super(props);
-        this.state = {fileMessage: "", inputAddress: null, file: null};
+        this.state = {fileMessage: "", showScannerBar: false, inputAddress: null, 
+                        file: null, displayImage: false, recognitionModalIsOpen: false,
+                        recognitionModalTitleMessage: "Performing Recognition..."
+                    };
 
         this.setFileMessage = this.setFileMessage.bind(this);
         this.setFile = this.setFile.bind(this);
@@ -101,13 +150,13 @@ export default class ExploreSection extends React.Component {
     }
     
     setFileMessage(message) {
-        this.setState({fileMessage: message})
+        this.setState({fileMessage: message});
     }
 
     setFile(file){ 
 
         if(file == null) {
-            this.setFileMessage("");
+            this.setFileMessage(" ");
         } else{
             this.setFileMessage(this.renderFileMessage(file.name));
         }
@@ -127,12 +176,10 @@ export default class ExploreSection extends React.Component {
     }
 
     handleSubmit(e) {
-        // console.log(1)
-        // console.log(e)
+        let that = this;
+   
         e.preventDefault();
-        e.stopPropagation();
-        // console.log(this.state.file);
-        // console.log(this.state.inputAddress);
+        e.stopPropagation(); 
         function isEmpty(str){
             return(!str || str.trim().length === 0)
         }
@@ -142,26 +189,40 @@ export default class ExploreSection extends React.Component {
             return;
         }
 
+        this.setState({recognitionModalIsOpen: true, recognitionModalTitleMessage: "Performing Recognition...", displayImage: URL.createObjectURL(this.state.file), showScannerBar: true});
+
         let form = new FormData();
         form.append('file', this.state.file);
         
+        this.makeRecognitionRequest(form);
+        
+    }
+
+    makeRecognitionRequest(form) {
+        let that = this;
+
         client({method: 'POST', path: '/recognition', entity: form, headers: {
             'Content-Type': 'multipart/form-data'
         }}).done(response => {
+            
             console.log(response)
             if (response.entity == 'NONE_FOUND'){
-                console.log('gob')
+                that.setState({showScannerBar: false, 
+                    recognitionModalTitleMessage: "No Vancouer Specials detected..."});
             }else{
-                const b64Response = btoa(response.entity);
-                // create an image
-                const outputImg = document.createElement('img');
-                outputImg.src = 'data:image/png;base64,'+b64Response;
-
-                // append it to your page
-                document.body.appendChild(outputImg);
+                const dispayText = (response.entity.instanceCount > 1) 
+                                    ? 'Found ' + response.entity.instanceCount + ' Vancouver Specials!'
+                                    : 'Found a Vancouver Special!'
+                that.setState({showScannerBar: false, 
+                    recognitionModalTitleMessage: "Found a Vancouver Special!",
+                    displayImage : 'data:image/png;base64,'+response.entity.image});
             }
 		});
-        
+    }
+
+    closeRecognitionModal(){
+        this.setState({recognitionModalIsOpen: false});
+        this.setFile(null);
     }
 
     handleAddressInput(e) {
@@ -202,6 +263,12 @@ export default class ExploreSection extends React.Component {
                 </Form>
       
             </Container>
+
+            <RecognitionModal displayImage={this.state.displayImage} show={this.state.recognitionModalIsOpen} 
+            onHide={() => this.closeRecognitionModal()} showScannerBar={this.state.showScannerBar}
+            titleMessage={this.state.recognitionModalTitleMessage}
+            />
+            
           </div>
 			
         );

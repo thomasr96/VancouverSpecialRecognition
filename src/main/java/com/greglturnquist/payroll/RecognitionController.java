@@ -1,6 +1,4 @@
 package com.greglturnquist.payroll;
-
-// import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -13,11 +11,7 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.bind.annotation.RequestParam;
 
-
-/**
- * @author Greg Turnquist
- */
-// tag::code[]
+ 
 @RestController // <1>
 public class RecognitionController {
 	// private final StorageService storageService;
@@ -52,4 +46,4 @@ public class RecognitionController {
 
 
 }
-// end::code[]
+ 

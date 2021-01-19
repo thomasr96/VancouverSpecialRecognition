@@ -167,6 +167,71 @@ h2{
     
 }
 
+#recognition-result-container {
+    // background: ;
+    .recognition-result {
+        height: 100%;
+        width: 100%;
+    }
+
+    #scanner-container {
+        position: relative;   
+        background-color: yellow;
+        float:left;
+        display: block;
+        max-height: 70vw;
+    }
+
+    .bar-scanner{
+        bottom:0%;
+        position:absolute;
+        -webkit-animation:linear infinite alternate;
+        -webkit-animation-name: run;
+        -webkit-animation-duration: 5s;
+    }     
+    @-webkit-keyframes run {
+        0% { left: 0;}
+        50%{ left : 100%;}
+        100%{ left: 0;}
+    }
+
+    .bar-scanner {
+        background-color: red;
+        height:100%;
+        width: 3px;
+        
+        position: absolute;
+        /* top: 10px; *//* 
+        left: 10px;  */
+            
+        /* padding: 5px; */
+        /* background-color: blue; */
+        // box-shadow: 1px 1px 7px 3px red;
+        box-shadow: 2px 0px 10px 1px red
+        /* box-shadow: 2px 2px 5px 5px rgba(0, 0, 255, .2);border: 2px solid red; */
+    }
+
+
+}
+
+#recognition-modal {
+
+    .container {
+        display:flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .modal-body {
+        // max-width: 30vw;
+        display: block;
+        overflow: auto;
+        
+    }
+}
+
+
+
 
 
 @media only screen and (max-width: 530px) {
