@@ -32,11 +32,11 @@ Spring Data REST addresses how simple this problem can be if some assumptions ar
 
 Domain objects form the cornerstone of any Spring Data REST-based application. In this section, you will build an application to track the employees for a company. Kick that off by creating a data type, as follows:
 
-.src/main/java/com/greglturnquist/payroll/Employee.java
+.src/main/java/com/thomasretzloff/payroll/Employee.java
 ====
 [source,java]
 ----
-include::src/main/java/com/greglturnquist/payroll/Employee.java[tag=code]
+include::src/main/java/com/thomasretzloff/payroll/Employee.java[tag=code]
 ----
 
 <1> `@Entity` is a JPA annotation that denotes the whole class for storage in a relational table.
@@ -51,11 +51,11 @@ NOTE: Spring Data REST is not confined to JPA. It supports many NoSQL data store
 
 Another key piece of a Spring Data REST application is a corresponding repository definition, as follows:
 
-.src/main/java/com/greglturnquist/payroll/EmployeeRepository.java
+.src/main/java/com/thomasretzloff/payroll/EmployeeRepository.java
 ====
 [source,java]
 ----
-include::src/main/java/com/greglturnquist/payroll/EmployeeRepository.java[tag=code]
+include::src/main/java/com/thomasretzloff/payroll/EmployeeRepository.java[tag=code]
 ----
 
 <1> The repository extends Spring Data Commons' `CrudRepository` and plugs in the type of the domain object and its primary key
@@ -69,11 +69,11 @@ NOTE: You can define https://docs.spring.io/spring-data/jpa/docs/current/referen
 
 To work with this application, you need to pre-load it with some data, as follows:
 
-.src/main/java/com/greglturnquist/payroll/DatabaseLoader.java
+.src/main/java/com/thomasretzloff/payroll/DatabaseLoader.java
 ====
 [source,java]
 ----
-include::src/main/java/com/greglturnquist/payroll/DatabaseLoader.java[tag=code]
+include::src/main/java/com/thomasretzloff/payroll/DatabaseLoader.java[tag=code]
 ----
 
 <1> This class is marked with Spring's `@Component` annotation so that it is automatically picked up by `@SpringBootApplication`.
@@ -101,11 +101,11 @@ include::src/main/resources/application.properties[]
 
 The last step needed to get a fully operational REST API off the ground is to write a `public static void main` method by using Spring Boot, as follows:
 
-.src/main/java/com/greglturnquist/payroll/ReactAndSpringDataRestApplication.java
+.src/main/java/com/thomasretzloff/payroll/ReactAndSpringDataRestApplication.java
 ====
 [source,java]
 ----
-include::src/main/java/com/greglturnquist/payroll/ReactAndSpringDataRestApplication.java[tag=code]
+include::src/main/java/com/thomasretzloff/payroll/ReactAndSpringDataRestApplication.java[tag=code]
 ----
 ====
 
@@ -211,11 +211,11 @@ You can also `PUT`, `PATCH`, and `DELETE`, as shown in https://spring.io/guides/
 
 Spring Boot makes it super simple to stand up a custom web page. First, you need a Spring MVC controller, as follows:
 
-.src/main/java/com/greglturnquist/payroll/HomeController.java
+.src/main/java/com/thomasretzloff/payroll/HomeController.java
 ====
 [source,java]
 ----
-include::src/main/java/com/greglturnquist/payroll/HomeController.java[tag=code]
+include::src/main/java/com/thomasretzloff/payroll/HomeController.java[tag=code]
 ----
 
 <1> `@Controller` marks this class as a Spring MVC controller.

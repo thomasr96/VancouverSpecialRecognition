@@ -81,7 +81,7 @@ class InputIcon extends React.Component {
     constructor(props){
         super(props)
         this.state = {};
-        this.componentDidMount.bind(this);
+        this.componentDidMount = this.componentDidMount.bind(this);
         this.onFileSelect = this.onFileSelect.bind(this);
         this.onUploadClick = this.onUploadClick.bind(this);
     }
@@ -91,18 +91,13 @@ class InputIcon extends React.Component {
     }
 
     onFileSelect(inputElement){ 
-        console.log('inputElement')
-        console.log(inputElement)
-
         this.props.setFile(inputElement.files[0]);
     }
 
     componentDidMount() {
         const fileInput = document.getElementById("input-file");
         // fileInput.addEventListener('change', (e) => this.onFileSelect(e.target));
-        this.setState({fileInput:fileInput});
-
-        
+        this.setState({fileInput:fileInput});    
     }
  
     renderTooltip(props){
@@ -121,7 +116,7 @@ class InputIcon extends React.Component {
             >
                 <div id="submit-icon-container">
                     <Form.Group className="d-none">
-                        <Form.File id="input-file" onChange={(e) => this.onFileSelect(e.target)} label="" accept=".png,.jpg,.jpeg"/>
+                        <Form.File id="input-file" onClick={(e) => e.target.value=null} onChange={(e) => this.onFileSelect(e.target)} label="" accept=".png,.jpg,.jpeg"/>
                     </Form.Group>
         
                     <Button onClick={this.onUploadClick} id="upload-file-button" className="icon-button" variant="primary">
@@ -140,13 +135,22 @@ export default class ExploreSection extends React.Component {
 		super(props);
         this.state = {fileMessage: "", showScannerBar: false, inputAddress: null, 
                         file: null, displayImage: false, recognitionModalIsOpen: false,
-                        recognitionModalTitleMessage: "Performing Recognition..."
+                        recognitionModalTitleMessage: "Performing Recognition...", apiKey: undefined
                     };
 
         this.setFileMessage = this.setFileMessage.bind(this);
         this.setFile = this.setFile.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this)
         this.handleAddressInput = this.handleAddressInput.bind(this)
+        this.componentDidMount = this.componentDidMount.bind(this)
+        this.handleRecognitionResponse = this.handleRecognitionResponse.bind(this);
+    }   
+    
+    componentDidMount(){
+		client({method: 'GET', path: '/api-key'}).done(response => {
+            this.setState({apiKey: response.entity.key})
+            
+        });
     }
     
     setFileMessage(message) {
@@ -154,7 +158,7 @@ export default class ExploreSection extends React.Component {
     }
 
     setFile(file){ 
-
+  
         if(file == null) {
             this.setFileMessage(" ");
         } else{
@@ -177,47 +181,99 @@ export default class ExploreSection extends React.Component {
 
     handleSubmit(e) {
         let that = this;
-   
+        // let form;
+
         e.preventDefault();
         e.stopPropagation(); 
         function isEmpty(str){
             return(!str || str.trim().length === 0)
         }
+        
+        if (this.state.file !== null){
+            this.setState({recognitionModalIsOpen: true, recognitionModalTitleMessage: "Performing Recognition...", displayImage: URL.createObjectURL(this.state.file), showScannerBar: true});
 
-        if (this.state.file == null && isEmpty(this.state.inputAddress)){
+            let form = new FormData();
+            form.append('file', this.state.file);
+            that.makeRecognitionRequest(form);
+            
+        }else if (!isEmpty(this.state.inputAddress)){
+            
+            // const location = '991 Everett Crescent, Burnaby, British Columbia';
+            let location = this.state.inputAddress;
+            
+            let theUrl = "https://maps.googleapis.com/maps/api/streetview?size=400x400&location="+location + "&key="+ this.state.apiKey ;
+            
+            let xmlHttp = new XMLHttpRequest();
+            xmlHttp.responseType = 'blob';
+            xmlHttp.open( "GET", theUrl, true ); // false for synchronous request
+            xmlHttp.send( null );
+            xmlHttp.onreadystatechange = function (){
+ 
+                var outputImg = document.createElement('img');
+ 
+                // try {
+                //     outputImg.srcObject = xmlHttp.response;
+                //     // outputImg.src = URL.createObjectURL()
+                //   } catch (error) {
+                    outputImg.src = window.URL.createObjectURL(xmlHttp.response)
+                    let blob = xmlHttp.response;
+                    // camera.src = window.URL.createObjectURL(stream);
+                //   }
+                that.setState({file:blob, recognitionModalIsOpen: true, recognitionModalTitleMessage: "Performing Recognition...", displayImage: URL.createObjectURL(blob), showScannerBar: true});
+
+                let form = new FormData();
+                form.append('file', blob);
+                
+                that.makeRecognitionRequest(form);
+
+            }
+        } else{
             alert('Please enter an address or upload an image.')
             return;
         }
-
-        this.setState({recognitionModalIsOpen: true, recognitionModalTitleMessage: "Performing Recognition...", displayImage: URL.createObjectURL(this.state.file), showScannerBar: true});
-
-        let form = new FormData();
-        form.append('file', this.state.file);
-        
-        this.makeRecognitionRequest(form);
-        
+       
+        // this.makeRecognitionRequest(form);
     }
 
     makeRecognitionRequest(form) {
         let that = this;
-
+        const startRecognitionTime = performance.now();
+        
         client({method: 'POST', path: '/recognition', entity: form, headers: {
             'Content-Type': 'multipart/form-data'
         }}).done(response => {
             
-            console.log(response)
-            if (response.entity == 'NONE_FOUND'){
-                that.setState({showScannerBar: false, 
-                    recognitionModalTitleMessage: "No Vancouer Specials detected..."});
+            const elapsedTimeWithDiff = 2500 - (performance.now() - startRecognitionTime);
+            
+            if(elapsedTimeWithDiff > 0) {
+                
+                var myInterval = setInterval(function(){
+                    clearInterval(myInterval);
+                    that.handleRecognitionResponse(response);
+                    }, elapsedTimeWithDiff);
+
             }else{
-                const dispayText = (response.entity.instanceCount > 1) 
-                                    ? 'Found ' + response.entity.instanceCount + ' Vancouver Specials!'
-                                    : 'Found a Vancouver Special!'
-                that.setState({showScannerBar: false, 
-                    recognitionModalTitleMessage: "Found a Vancouver Special!",
-                    displayImage : 'data:image/png;base64,'+response.entity.image});
+                
+                that.handleRecognitionResponse(response);
             }
+
+            
+            
 		});
+    }
+
+    handleRecognitionResponse(response) {
+        if (response.entity == 'NONE_FOUND'){
+            this.setState({showScannerBar: false, 
+                recognitionModalTitleMessage: "No Vancouer Specials detected..."});
+        }else{
+            const dispayText = (response.entity.instanceCount > 1) 
+                                ? 'Found ' + response.entity.instanceCount + ' Vancouver Specials!'
+                                : 'Found a Vancouver Special!'
+            this.setState({showScannerBar: false, 
+                recognitionModalTitleMessage: "Found a Vancouver Special!",
+                displayImage : 'data:image/png;base64,'+response.entity.image});
+        }
     }
 
     closeRecognitionModal(){
@@ -236,8 +292,7 @@ export default class ExploreSection extends React.Component {
 
     render(){
         return(
-            
-            
+
           <div id="explore-section" className='text-dark vs-section'>
             
             <ExploreMainText />
@@ -247,7 +302,7 @@ export default class ExploreSection extends React.Component {
                     <div>
                         <div className="d-inline-flex input-well">
                             
-                            <GoogleAutocompleteSearch handleAddressInput={this.handleAddressInput}/>
+                            <GoogleAutocompleteSearch apiKey={this.state.apiKey} handleAddressInput={this.handleAddressInput}/>
                             
                             <InputIcon setFile={this.setFile} />
                         </div>
@@ -266,7 +321,7 @@ export default class ExploreSection extends React.Component {
 
             <RecognitionModal displayImage={this.state.displayImage} show={this.state.recognitionModalIsOpen} 
             onHide={() => this.closeRecognitionModal()} showScannerBar={this.state.showScannerBar}
-            titleMessage={this.state.recognitionModalTitleMessage}
+            titleMessage={this.state.recognitionModalTitleMessage}  
             />
             
           </div>
