@@ -10,7 +10,7 @@ import java.util.HashMap;
 public class GoogleAPIController {
 
     @Value("${GOOGLE_MAPS_API_KEY}")
-    private String GOOGLE_MAPS_API_KEY;
+	private String GOOGLE_MAPS_API_KEY;
     
 	@RequestMapping(value = "/api-key") // <2>
 	public HashMap<String, String> apiKey() {	 
