@@ -76,11 +76,11 @@ class RecognitionModal extends React.Component {
     }
 }
 
-class InputIcon extends React.Component {
+class InputIconElement extends React.Component {
 
     constructor(props){
         super(props)
-        this.state = {};
+        this.state = {fileSizeKB: 500};
         this.componentDidMount = this.componentDidMount.bind(this);
         this.onFileSelect = this.onFileSelect.bind(this);
         this.onUploadClick = this.onUploadClick.bind(this);
@@ -89,9 +89,29 @@ class InputIcon extends React.Component {
     onUploadClick(e){
         this.state.fileInput.click();
     }
+    checkFileSize(files) {
+        if(files && files.length == 1)
+        {       
+            
+            if (files[0].size > this.state.fileSizeKB * 1000) 
+            {
+                return false;
+            }
+        }
+
+        return true;
+        
+        
+    }
 
     onFileSelect(inputElement){ 
-        this.props.setFile(inputElement.files[0]);
+
+        // if(file)
+        if(this.checkFileSize(inputElement.files)){
+            this.props.setFile(inputElement.files[0]);
+        }else{
+            alert('File size must be less than ' + this.state.fileSizeKB + 'KB.')
+        }
     }
 
     componentDidMount() {
@@ -106,7 +126,7 @@ class InputIcon extends React.Component {
             Upload an image
         </Tooltip>);
     }
-
+    
     render(){
         return(
             <OverlayTrigger
@@ -116,7 +136,7 @@ class InputIcon extends React.Component {
             >
                 <div id="submit-icon-container">
                     <Form.Group className="d-none">
-                        <Form.File id="input-file" onClick={(e) => e.target.value=null} onChange={(e) => this.onFileSelect(e.target)} label="" accept=".png,.jpg,.jpeg"/>
+                        <Form.File id="input-file" onClick={(e) => e.target.value=null} onChange={(e) => this.onFileSelect(e.target)} label="" accept=".png,.jpg,.jpeg,.jfif"/>
                     </Form.Group>
         
                     <Button onClick={this.onUploadClick} id="upload-file-button" className="icon-button" variant="primary">
@@ -235,6 +255,20 @@ export default class ExploreSection extends React.Component {
         // this.makeRecognitionRequest(form);
     }
 
+    resetModal() {
+        this.setState({recognitionModalIsOpen:false});
+    }
+
+    handleServerError(response) {
+        alert(response.entity);
+    }
+
+    handleUploadError(response) {
+        this.resetModal();
+        this.handleServerError(response);
+        this.setFile(null);
+    }
+
     makeRecognitionRequest(form) {
         let that = this;
         const startRecognitionTime = performance.now();
@@ -243,6 +277,7 @@ export default class ExploreSection extends React.Component {
             'Content-Type': 'multipart/form-data'
         }}).done(response => {
             
+            // make sure the scanner runs for a bit :)
             const elapsedTimeWithDiff = 2500 - (performance.now() - startRecognitionTime);
             
             if(elapsedTimeWithDiff > 0) {
@@ -257,9 +292,8 @@ export default class ExploreSection extends React.Component {
                 that.handleRecognitionResponse(response);
             }
 
-            
-            
-		});
+        }, 
+        (response) => that.handleUploadError(response));
     }
 
     handleRecognitionResponse(response) {
@@ -267,11 +301,12 @@ export default class ExploreSection extends React.Component {
             this.setState({showScannerBar: false, 
                 recognitionModalTitleMessage: "No Vancouer Specials detected..."});
         }else{
+ 
             const dispayText = (response.entity.instanceCount > 1) 
                                 ? 'Found ' + response.entity.instanceCount + ' Vancouver Specials!'
-                                : 'Found a Vancouver Special!'
+                                : 'Found a Vancouver Special!';
             this.setState({showScannerBar: false, 
-                recognitionModalTitleMessage: "Found a Vancouver Special!",
+                recognitionModalTitleMessage: dispayText,
                 displayImage : 'data:image/png;base64,'+response.entity.image});
         }
     }
@@ -304,7 +339,7 @@ export default class ExploreSection extends React.Component {
                             
                             <GoogleAutocompleteSearch apiKey={this.state.apiKey} handleAddressInput={this.handleAddressInput}/>
                             
-                            <InputIcon setFile={this.setFile} />
+                            <InputIconElement setFile={this.setFile} />
                         </div>
                         <p id="input-message-container">
                             {this.state.fileMessage}
