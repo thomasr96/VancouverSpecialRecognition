@@ -35,7 +35,7 @@ public class RecognitionController {
 		HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.MULTIPART_FORM_DATA);
 
-		String url = "http://localhost:5000/api/test";
+		String url = "http://yolo:5000/api/test";
 
 		RestTemplate restTemplate = new RestTemplate();
 		HttpEntity<LinkedMultiValueMap<String, Object>> requestEntity = new HttpEntity<>(map, headers);
