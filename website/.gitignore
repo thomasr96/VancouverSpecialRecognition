@@ -228,6 +228,7 @@ gradle-app.setting
 
 ### Gradle Patch ###
 **/build/
+**/built/
 
 # End of https://www.toptal.com/developers/gitignore/api/java,gradle,maven,eclipse,intellij
 
