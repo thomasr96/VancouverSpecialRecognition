@@ -26,7 +26,6 @@ class App extends React.Component { // <1>
 	}
 
 	componentDidMount() {
-		// <link rel="icon" href="http://example.com/favicon.png"></link>
 		let linkElement = document.createElement('link');
 		linkElement.rel = 'icon';
 		linkElement.type = 'image/png';

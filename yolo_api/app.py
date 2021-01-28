@@ -49,7 +49,7 @@ def get_config(config_path):
 
 def load_model(configpath,weightspath):
     # load our YOLO object detector trained on COCO dataset (80 classes)
-    print("[INFO] loading YOLO from disk...")
+    # print("[INFO] loading YOLO from disk...")
     net = cv2.dnn.readNetFromDarknet(configpath, weightspath)
     return net
 
@@ -75,13 +75,13 @@ def get_predection(image,net,LABELS,COLORS):
     blob = cv2.dnn.blobFromImage(image, 1 / 255.0, (416, 416),
                                  swapRB=True, crop=False)
     net.setInput(blob)
-    start = time.time()
+    # start = time.time()
     layerOutputs = net.forward(ln)
-    print(layerOutputs)
-    end = time.time()
+    # print(layerOutputs)
+    # end = time.time()
 
     # show timing information on YOLO
-    print("[INFO] YOLO took {:.6f} seconds".format(end - start))
+    # print("[INFO] YOLO took {:.6f} seconds".format(end - start))
 
     # initialize our lists of detected bounding boxes, confidences, and
     # class IDs, respectively

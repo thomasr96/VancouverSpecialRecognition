@@ -9,10 +9,11 @@ services:
     build: 
       context: ./database
       dockerfile: ./Dockerfile
+    container_name: database
     networks:
       - back-tier
     ports:
-      - "3000:3000"
+      - "5432:5432"
     environment: 
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_DB=${POSTGRES_DB}
@@ -30,6 +31,11 @@ services:
       - ./website/src:/workspace/app/src
     environment: 
       - GOOGLE_MAPS_API_KEY=${GOOGLE_MAPS_API_KEY}
+      # jdbc:postgresql://host:port/database
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://database:5432/${POSTGRES_DB}
+      - SPRING_DATASOURCE_USERNAME=${POSTGRES_USER}
+      - SPRING_DATASOURCE_PASSWORD=${POSTGRES_PASSWORD}
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
     depends_on:
       - database
       - yolo

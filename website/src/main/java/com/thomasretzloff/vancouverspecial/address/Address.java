@@ -2,18 +2,24 @@
 
 import java.util.Objects;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.Table;
 
  
-@Entity  
+@Entity
+@Table(name = "addresses")
 public class Address {
 
-	private @Id @GeneratedValue Long id; // <2>
+	private @Id Long id; // <2>
+
+	@Column(name = "latitude", nullable = false)
 	private double latitude;
+	@Column(name = "longitude", nullable = false)
 	private double longitude;
-	private String address;
+	// private String address;
 
 	private Address() {}
 
@@ -22,16 +28,16 @@ public class Address {
 		this.longitude = longitude;
     }
     
-    public Address(String address) {
-		this.address = address;
-	}
+    // public Address(String address) {
+	// 	this.address = address;
+	// }
 
 
 
 	@Override
 	public int hashCode() {
 
-		return Objects.hash(latitude, longitude, address);
+		return Objects.hash(latitude, longitude);
 	}
  
 	public double getLatitude() {
@@ -50,17 +56,17 @@ public class Address {
 		this.longitude = longitude;
     }
     
-    public String getAddress() {
-        return address;
-    }
+    // public String getAddress() {
+    //     return address;
+    // }
 
-    public void setAddress(String address) {
-        this.address = address;
-    }
+    // public void setAddress(String address) {
+    //     this.address = address;
+    // }
 
-	@Override
-	public String toString() {
-		return address;
-	}
+	// @Override
+	// public String toString() {
+	// 	return address;
+	// }
 }
 // end::code[]

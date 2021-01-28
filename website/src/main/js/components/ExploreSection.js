@@ -76,6 +76,33 @@ class RecognitionModal extends React.Component {
     }
 }
 
+class AddressContainer extends React.Component {
+
+    constructor(props){
+        super(props)
+        this.state = {};
+    }
+
+    render(){
+        return(
+
+            <div>
+                <div className="d-inline-flex input-well">
+                    
+                    <GoogleAutocompleteSearch apiKey={this.props.apiKey} handleAddressInput={this.props.handleAddressInput}/>
+                    
+                    <InputIconElement setFile={this.props.setFile} />
+                </div>
+                <p className="flex-left">
+                    {this.props.fileMessage}
+                </p>
+
+            </div>
+            
+        );
+    }
+}
+
 class InputIconElement extends React.Component {
 
     constructor(props){
@@ -190,8 +217,8 @@ export default class ExploreSection extends React.Component {
 
     renderFileMessage(message) {
         return(
-            <span>
-                   <strong>File:</strong> {message}
+            <span id="input-message-container">
+                   <strong>File:</strong> <span id="input-message">{message}</span>
                 <Button className="icon-button" onClick={()=>this.setFile(null)} variant="primary">
                     <FontAwesomeIcon className="close-icon" icon={faTimesCircle} />
                 </Button>                
@@ -231,14 +258,9 @@ export default class ExploreSection extends React.Component {
  
                 var outputImg = document.createElement('img');
  
-                // try {
-                //     outputImg.srcObject = xmlHttp.response;
-                //     // outputImg.src = URL.createObjectURL()
-                //   } catch (error) {
                     outputImg.src = window.URL.createObjectURL(xmlHttp.response)
                     let blob = xmlHttp.response;
-                    // camera.src = window.URL.createObjectURL(stream);
-                //   }
+                   
                 that.setState({file:blob, recognitionModalIsOpen: true, recognitionModalTitleMessage: "Performing Recognition...", displayImage: URL.createObjectURL(blob), showScannerBar: true});
 
                 let form = new FormData();
@@ -251,8 +273,7 @@ export default class ExploreSection extends React.Component {
             alert('Please enter an address or upload an image.')
             return;
         }
-       
-        // this.makeRecognitionRequest(form);
+        
     }
 
     resetModal() {
@@ -334,18 +355,9 @@ export default class ExploreSection extends React.Component {
 
             <Container id='recognition-container'>
                 <Form id="recognition-form" inline>
-                    <div>
-                        <div className="d-inline-flex input-well">
-                            
-                            <GoogleAutocompleteSearch apiKey={this.state.apiKey} handleAddressInput={this.handleAddressInput}/>
-                            
-                            <InputIconElement setFile={this.setFile} />
-                        </div>
-                        <p id="input-message-container">
-                            {this.state.fileMessage}
-                        </p>
-
-                    </div>
+                    
+                    <AddressContainer apiKey={this.state.apiKey} handleAddressInput={this.handleAddressInput} setFile={this.setFile} fileMessage={this.state.fileMessage}/>
+                    
                     <Button variant="primary" type="submit" onClick={this.handleSubmit}>
                         Submit
                     </Button>
