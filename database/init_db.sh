@@ -1,0 +1,1 @@
+psql -U postgres -d mydb -a -f "/app/init_db.sql"

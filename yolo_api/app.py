@@ -162,45 +162,23 @@ app = Flask(__name__)
 # route http posts to this method
 @app.route('/api/test', methods=['POST'])
 def main():
-    # load our input image and grab its spatial dimensions
-    #image = cv2.imread("./test1.jpg")
-    print('gombond on this smacker')
-    print(request.form)
-    print(request.form.getlist('output[]'))
-    print(request.files['image'])
-    # request.files['image'].save('gorbomon.jpeg')
-    
-    print('alorbor')
-    # img = request.files["image"].read()
+ 
     image = cv2.imdecode(np.fromstring(request.files['image'].read(), np.uint8), cv2.IMREAD_UNCHANGED)
-    # img = Image.open(io.BytesIO(img))
-    # npimg=np.array(img)
-    # image=npimg.copy()
+ 
     image=cv2.cvtColor(image,cv2.COLOR_BGR2RGB)
     res, instance_count = get_predection(image,nets,Lables,Colors)
     
     if (res is None or instance_count <= 0):
         return Response(response="NONE_FOUND", status=200)
-    
-    # image=cv2.cvtColor(image,cv2.COLOR_BGR2RGB)
-    # show the output image
-    #cv2.imshow("Image", res)
-    #cv2.waitKey()
+ 
     image=cv2.cvtColor(res,cv2.COLOR_BGR2RGB)
-    # cv2.imwrite('nord.png', image) 
-    # np_img=Image.fromarray(image)
-    # img_encoded=image_to_byte_array(np_img)
-    # cv2.imwrite('ggg.png', image) 
+ 
     img_encoded=cv2.imencode('.png', image)[1]
     frame_b64 = base64.b64encode(img_encoded)
-
-    # send_response = {'image': frame_b64, 'instanceCount': 50}
-    print('gombol')
-    # print(send_response)
-    # return Response(response=frame_b64, status=200,mimetype="image/png")
+ 
     return jsonify({'status':'succces', 'image': frame_b64.decode('ascii'), 'instanceCount': instance_count, 'mimetype':"image/png"})
     
 
     # start flask app
-if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0')
+# if __name__ == '__main__':
+#     app.run(debug=false, host='0.0.0.0')

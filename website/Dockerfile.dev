@@ -1,0 +1,25 @@
+FROM maven:3-jdk-8 as build
+WORKDIR /workspace/app
+
+
+# COPY node_modules .
+COPY mvnw .
+COPY .mvn .mvn
+COPY pom.xml .
+COPY src src
+COPY webpack.config.js .
+COPY package.json .
+# RUN chmod +x mvnw
+# RUN dos2unix mvnw
+RUN mvn clean install
+RUN mkdir -p target/dependency && (cd target/dependency; jar -xf ../*.jar)
+
+# ENV GOOGLE_MAPS_API_KEY ${$GOOGLE_MAPS_API_KEY}
+# FROM openjdk:8-jdk-alpine
+# VOLUME /tmp
+# ARG DEPENDENCY=/workspace/app/target/dependency
+# COPY --from=build ${DEPENDENCY}/BOOT-INF/lib /app/lib
+# COPY --from=build ${DEPENDENCY}/META-INF /app/META-INF
+# COPY --from=build ${DEPENDENCY}/BOOT-INF/classes /app
+# ENTRYPOINT ["java","-cp","app:app/lib/*","ReactAndSpringDataRestApplication.Application"]
+CMD ["mvn", "spring-boot:run"]

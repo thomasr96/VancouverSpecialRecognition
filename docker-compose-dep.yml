@@ -1,0 +1,36 @@
+# deployment
+version: '3'
+
+networks:
+  back-tier:
+
+services:
+  database:
+    build: ./database
+    networks:
+      - back-tier
+    ports:
+      - "3000:3000"
+  website:
+    build: 
+      context: ./website
+      dockerfile: ./Dockerfile.deploy
+    image: thomasr96/vancouverspecialrecognition_website
+    networks:
+      - back-tier
+    ports:
+      - "80:8080"
+    environment: 
+      - GOOGLE_MAPS_API_KEY=${GOOGLE_MAPS_API_KEY}
+    depends_on:
+      - database
+      - yolo
+  yolo:
+    build: ./yolo_api
+    image: thomasr96/vancouverspecialrecognition_yolo
+    networks:
+      - back-tier
+    ports:
+      - "5000:5000"
+    # depends_on:
+    #   - database

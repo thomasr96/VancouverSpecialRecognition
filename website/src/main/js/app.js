@@ -16,12 +16,23 @@ import Button from 'react-bootstrap/Button';
 import AboutSection from './components/AboutSection';
 import HouseMapSection from './components/HouseMapSection';
 import ExploreSection from './components/ExploreSection';
+import vancouverSpecialImg from './../resources/images/vancouver_special.jpg'
 
 class App extends React.Component { // <1>
 
 	constructor(props) {
 		super(props);
 		this.state = {addresses: []};
+	}
+
+	componentDidMount() {
+		// <link rel="icon" href="http://example.com/favicon.png"></link>
+		let linkElement = document.createElement('link');
+		linkElement.rel = 'icon';
+		linkElement.type = 'image/png';
+		linkElement.href = vancouverSpecialImg;
+
+		document.getElementsByTagName('head')[0].appendChild(linkElement);
 	}
 
 	render() {
