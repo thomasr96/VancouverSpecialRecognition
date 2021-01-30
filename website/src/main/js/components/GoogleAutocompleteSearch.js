@@ -43,7 +43,7 @@ export default class GoogleAutocompleteSearch extends React.Component {
 
         autocomplete.addListener("place_changed", this.placeChanged);
 
-        this.setState({autocomplete:autocomplete})
+        this.setState({autocomplete:autocomplete});
       }
 
       placeChanged() {

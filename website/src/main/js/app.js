@@ -18,6 +18,7 @@ import HouseMapSection from './components/HouseMapSection';
 import ExploreSection from './components/ExploreSection';
 import vancouverSpecialImg from './../resources/images/vancouver_special.jpg'
 
+
 class App extends React.Component { // <1>
 
 	constructor(props) {
