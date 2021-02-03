@@ -1,6 +1,6 @@
 # VancouverSpecialRecognition
 
-This repository holds code for the website behind my final thesis. The website is very easily run via Docker Compose (also found in the run file):
+See `vanspecial.house` for a running version. This repository holds code for the website behind my final thesis. The website is very easily run via Docker Compose (also found in the run file):
 
 ```
 GOOGLE_MAPS_API_KEY=$GOOGLE_MAPS_API_KEY POSTGRES_USER=myuser POSTGRES_DB=mydb POSTGRES_PASSWORD=password docker-compose -f docker-compose-dep.yml up --build
